@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Buddy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="logo-icon">🎓</span>
+                <h1 class="logo-text">STUDY BUDDY</h1>
+            </div>
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-tab="subjects-tab" id="btn-subjects-tab">
+                    <span class="nav-icon">📚</span> Subjects Explainer
+                </button>
+                <button class="nav-btn" data-tab="leetcode-tab" id="btn-leetcode-tab">
+                    <span class="nav-icon">💻</span> LeetCode Solver
+                </button>
+                <button class="nav-btn" data-tab="settings-tab" id="btn-settings-tab">
+                    <span class="nav-icon">⚙️</span> Index & Settings
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Main Viewport -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="app-header">
+                <h2 id="current-tab-title">Subjects Explainer</h2>
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span id="backend-status">Connected</span>
+                </div>
+            </header>
+
+            <!-- Tab Content Area -->
+            <div class="tab-viewport">
+                <!-- SUBJECTS TAB -->
+                <section class="tab-pane active" id="subjects-tab">
+                    <div class="subjects-grid">
+                        <!-- Subjects Selector List -->
+                        <div class="card subjects-list-card">
+                            <h3>Subjects</h3>
+                            <div class="subject-selector-list" id="subject-selector-list">
+                                <!-- Dynamic subjects buttons go here -->
+                            </div>
+                        </div>
+
+                        <!-- Topics Checklist & Progress -->
+                        <div class="card topics-list-card">
+                            <div class="topics-header">
+                                <h3 id="selected-subject-name">Select a Subject</h3>
+                                <span class="badge" id="topics-progress-label">0 / 0 done</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" id="topics-progress-bar" style="width: 0%"></div>
+                            </div>
+                            <div class="topics-checklist" id="topics-checklist">
+                                <p class="placeholder-text">Please select a subject to load its learning checklist.</p>
+                            </div>
+                        </div>
+
+                        <!-- Explanations Viewport -->
+                        <div class="card explanation-card">
+                            <div class="explanation-header">
+                                <h3>Grounded Explanation</h3>
+                                <div class="explanation-actions" style="display: flex; align-items: center; gap: 12px;">
+                                    <a class="btn btn-sm btn-export" id="btn-export-subjects" style="display:none; text-decoration:none;" href="#" target="_blank">📥 Export PDF</a>
+                                    <span class="explanation-status" id="explanation-status">Ready</span>
+                                </div>
+                            </div>
+                            <div class="explanation-body markdown-content" id="explanation-body">
+                                <div class="welcome-placeholder">
+                                    <span class="placeholder-icon">📖</span>
+                                    <p>Select any topic from the checklist on the left, and Qwen 3 will pull concepts from the indexed PDF database and explain them in elaborative detail here.</p>
+                                </div>
+                            </div>
+                            <!-- Pinned Follow-up Chat Input -->
+                            <div class="chat-input-container" id="subjects-chat-input-container" style="display:none;">
+                                <input type="text" id="subjects-followup-input" placeholder="Ask a follow-up question about this topic..." />
+                                <button class="btn" id="btn-subjects-followup-send">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- LEETCODE TAB -->
+                <section class="tab-pane" id="leetcode-tab">
+                    <div class="leetcode-grid">
+                        <!-- Left Panel: Problem Input -->
+                        <div class="card leetcode-input-card">
+                            <h3>LeetCode Problem Statement</h3>
+                            <textarea class="code-textarea" id="leetcode-problem-input" placeholder="Paste the problem statement here (e.g., Two Sum: Given an array of integers...)..."></textarea>
+                            <div class="leetcode-actions">
+                                <span class="status-msg" id="leetcode-status-msg"></span>
+                                <button class="btn btn-primary" id="btn-leetcode-solve">Solve & Teach</button>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Solutions Explanations -->
+                        <div class="card leetcode-explanation-card">
+                            <div class="explanation-header" style="display: flex; align-items: center; justify-content: space-between;">
+                                <h3>Algorithmic Breakdown</h3>
+                                <a class="btn btn-sm btn-export" id="btn-export-leetcode" style="display:none; text-decoration:none;" href="#" target="_blank">📥 Export PDF</a>
+                            </div>
+                            <div class="explanation-body markdown-content" id="leetcode-explanation-body">
+                                <div class="welcome-placeholder">
+                                    <span class="placeholder-icon">💡</span>
+                                    <p>Paste a coding problem and click Solve. Qwen will generate brute force and optimized solutions, and Study Buddy will teach them in deep, comprehensive detail here.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SETTINGS TAB -->
+                <section class="tab-pane" id="settings-tab">
+                    <div class="settings-container">
+                        <!-- Ingestion Settings Card -->
+                        <div class="card settings-card">
+                            <h3>PDF Ingestion & Subject Databases</h3>
+                            <p class="section-description">Manage and index PDF documents stored in <code>Books/&lt;Subject&gt;/</code>. Ingestion runs locally on your GPU, splitting documents, computing embeddings, and storing them in ChromaDB.</p>
+                            
+                            <div class="subjects-status-table-container">
+                                <table class="settings-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Subject</th>
+                                            <th>Status</th>
+                                            <th>Indexed Topics</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ingest-status-tbody">
+                                        <!-- Dynamic database rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- System Status & Model Settings -->
+                        <div class="card settings-card">
+                            <h3>System & Models Status</h3>
+                            <div class="system-stats-grid">
+                                <div class="stat-item">
+                                    <span class="stat-label">Explainer Model (GPU)</span>
+                                    <span class="stat-value" id="stat-explainer-model">qwen3:8b</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Coding Engine (GPU)</span>
+                                    <span class="stat-value" id="stat-coder-model">qwen2.5-coder:7b</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Embeddings Model</span>
+                                    <span class="stat-value" id="stat-embed-model">nomic-embed-text</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">VRAM Hardware Spec</span>
+                                    <span class="stat-value">RTX 4060 (8GB VRAM)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
